@@ -12,11 +12,11 @@ public class PathBuilder<T> {
 		nodes = new ArrayList<AttachedTreeNode<T>>();
 	}
 
-	public PathBuilder<T> with(T source, T destination) {
-		return with(source, destination, MINIMUM_WEIGHT);
+	public PathBuilder<T> withVertex(T source, T destination) {
+		return withVertex(source, destination, MINIMUM_WEIGHT);
 	}
 
-	public PathBuilder<T> with(T source, T destination, int weight) {
+	public PathBuilder<T> withVertex(T source, T destination, int weight) {
 		if (weight < MINIMUM_WEIGHT) {
 			throw new IllegalArgumentException("Minimum weight is " + MINIMUM_WEIGHT);
 		}
