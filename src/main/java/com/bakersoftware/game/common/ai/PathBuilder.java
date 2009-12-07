@@ -4,43 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PathBuilder<T> {
-	private final List<AttachedTreeNode<T>> nodes;
+	private static final int MINIMUM_WEIGHT = 1;
 
-	private int index;
+	private final List<AttachedTreeNode<T>> nodes;
 
 	public PathBuilder() {
 		nodes = new ArrayList<AttachedTreeNode<T>>();
 	}
 
-	public void addConnection(T source, T destination) {
-		addConnection(source, destination, 1);
+	public PathBuilder<T> with(T source, T destination) {
+		return with(source, destination, MINIMUM_WEIGHT);
 	}
 
-	public void addConnection(T source, T destination, int weight) {
-		for (AttachedTreeNode<T> node : nodes) {
-			if (node.getAttached().equals(source)) {
-				node.addAjacentNode(new AttachedTreeNode<T>(destination, index));
-				index++;
-				return;
-			}
+	public PathBuilder<T> with(T source, T destination, int weight) {
+		if (weight < MINIMUM_WEIGHT) {
+			throw new IllegalArgumentException("Minimum weight is " + MINIMUM_WEIGHT);
 		}
 
-		AttachedTreeNode<T> newNode = new AttachedTreeNode<T>(source, index);
-		newNode.addAjacentNode(new AttachedTreeNode<T>(destination, index));
-		nodes.add(newNode);
-		index++;
+		AttachedTreeNode<T> node = getNewOrExistingNodeForAttached(source);
+		node.addAjacentNode(addNodeWithAttached(destination));
+		return this;
 	}
 
-	public List<AttachedTreeNode<T>> getNodes() {
+	public List<AttachedTreeNode<T>> list() {
 		return nodes;
 	}
 
-	public AttachedTreeNode<T> getNodeForAttached(T attached) {
+	public AttachedTreeNode<T> findNodeWithAttached(T attached) {
 		for (AttachedTreeNode<T> node : nodes) {
 			if (node.getAttached().equals(attached)) {
 				return node;
 			}
 		}
 		return null;
+	}
+
+	private AttachedTreeNode<T> getNewOrExistingNodeForAttached(T attached) {
+		AttachedTreeNode<T> node = findNodeWithAttached(attached);
+		if (node == null) {
+			node = addNodeWithAttached(attached);
+		}
+		return node;
+	}
+
+	private AttachedTreeNode<T> addNodeWithAttached(T attached) {
+		AttachedTreeNode<T> node = new AttachedTreeNode<T>(attached, nodes.size());
+		nodes.add(node);
+		return node;
 	}
 }
