@@ -4,26 +4,27 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
-public class ShortestPathCalculator {
-	public Stack<TreeNode> calculatePath(final TreeNode source, final TreeNode destination,
-			int numNodes) {
-		Queue<TreeNode> unsettled = new PriorityQueue<TreeNode>();
+public class ShortestPathCalculator<T> {
+	public synchronized Stack<AttachedTreeNode<T>> calculatePath(
+			final AttachedTreeNode<T> source,
+			final AttachedTreeNode<T> destination, int numNodes) {
+		Queue<AttachedTreeNode<T>> unsettled = new PriorityQueue<AttachedTreeNode<T>>();
 		boolean[] settled = new boolean[numNodes];
 
 		source.setWeight(0);
 		unsettled.add(source);
 
 		while (unsettled.size() > 0) {
-			TreeNode head = unsettled.poll();
+			AttachedTreeNode<T> head = unsettled.poll();
 			settled[head.getIndex()] = true;
 			relaxNeighbors(head, unsettled, settled);
 		}
 
-		Stack<TreeNode> path = new Stack<TreeNode>();
+		Stack<AttachedTreeNode<T>> path = new Stack<AttachedTreeNode<T>>();
 		if (destination.getParent() != null) {
 			path.push(destination);
-			TreeNode reverse = destination.getParent();
-			while (reverse != source) {
+			AttachedTreeNode<T> reverse = destination.getParent();
+			while (reverse != source && reverse != null) {
 				path.push(reverse);
 				reverse = reverse.getParent();
 			}
@@ -32,9 +33,11 @@ public class ShortestPathCalculator {
 		return path;
 	}
 
-	private void relaxNeighbors(TreeNode node, Queue<TreeNode> unsettled, boolean[] settled) {
-		for (TreeNode adjNode : node.getAdjacentNodes()) {
-			if (!settled[adjNode.getIndex()] && adjNode.getWeight() > (node.getWeight() + 1)) {
+	private void relaxNeighbors(AttachedTreeNode<T> node,
+			Queue<AttachedTreeNode<T>> unsettled, boolean[] settled) {
+		for (AttachedTreeNode<T> adjNode : node.getAdjacentNodes()) {
+			if (!settled[adjNode.getIndex()]
+					&& adjNode.getWeight() > (node.getWeight() + 1)) {
 				adjNode.setWeight(node.getWeight() + 1);
 				adjNode.setParent(node);
 				unsettled.add(adjNode);

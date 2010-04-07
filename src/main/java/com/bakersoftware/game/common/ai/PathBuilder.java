@@ -1,6 +1,7 @@
 package com.bakersoftware.game.common.ai;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class PathBuilder<T> {
@@ -8,8 +9,11 @@ public class PathBuilder<T> {
 
 	private final List<AttachedTreeNode<T>> nodes;
 
-	public PathBuilder() {
-		nodes = new ArrayList<AttachedTreeNode<T>>();
+	private final Comparator<T> comparator;
+
+	public PathBuilder(Comparator<T> comparator) {
+		this.comparator = comparator;
+		this.nodes = new ArrayList<AttachedTreeNode<T>>();
 	}
 
 	public PathBuilder<T> withVertex(T source, T destination) {
@@ -18,25 +22,26 @@ public class PathBuilder<T> {
 
 	public PathBuilder<T> withVertex(T source, T destination, int weight) {
 		if (weight < MINIMUM_WEIGHT) {
-			throw new IllegalArgumentException("Minimum weight is " + MINIMUM_WEIGHT);
+			throw new IllegalArgumentException("Minimum weight is "
+					+ MINIMUM_WEIGHT);
 		}
 
 		AttachedTreeNode<T> node = getNewOrExistingNodeForAttached(source);
-		node.addAjacentNode(addNodeWithAttached(destination));
+		AttachedTreeNode<T> destinationNode = getNewOrExistingNodeForAttached(destination);
+		node.addAjacentNode(destinationNode);
+		return this;
+	}
+
+	public PathBuilder<T> withBiDirectionalVertex(T source, T destination) {
+		AttachedTreeNode<T> node = getNewOrExistingNodeForAttached(source);
+		AttachedTreeNode<T> destinationNode = getNewOrExistingNodeForAttached(destination);
+		node.addAjacentNode(destinationNode);
+		destinationNode.addAjacentNode(node);
 		return this;
 	}
 
 	public List<AttachedTreeNode<T>> list() {
 		return nodes;
-	}
-
-	public AttachedTreeNode<T> findNodeWithAttached(T attached) {
-		for (AttachedTreeNode<T> node : nodes) {
-			if (node.getAttached().equals(attached)) {
-				return node;
-			}
-		}
-		return null;
 	}
 
 	private AttachedTreeNode<T> getNewOrExistingNodeForAttached(T attached) {
@@ -48,8 +53,18 @@ public class PathBuilder<T> {
 	}
 
 	private AttachedTreeNode<T> addNodeWithAttached(T attached) {
-		AttachedTreeNode<T> node = new AttachedTreeNode<T>(attached, nodes.size());
+		AttachedTreeNode<T> node = new AttachedTreeNode<T>(attached, nodes
+				.size());
 		nodes.add(node);
 		return node;
+	}
+
+	public AttachedTreeNode<T> findNodeWithAttached(T attached) {
+		for (AttachedTreeNode<T> node : nodes) {
+			if (comparator.compare(node.getAttached(), attached) == 0) {
+				return node;
+			}
+		}
+		return null;
 	}
 }
