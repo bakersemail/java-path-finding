@@ -1,26 +1,27 @@
 package com.bakersoftware.game.common.ai;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.bakersoftware.game.common.ai.TreeNode;
-
-public class AttachedTreeNode<T> implements TreeNode {
+public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 	private final int index;
-	private final List<TreeNode> adjacentNodes;
+	private final Set<AttachedTreeNode<T>> adjacentNodes;
+	private final T attached;
 
-	private T attached;
-	private TreeNode parent;
+	private AttachedTreeNode<T> parent;
 	private int weight;
 
 	public AttachedTreeNode(T attached, int index) {
 		this.index = index;
-		this.adjacentNodes = new ArrayList<TreeNode>();
-		this.weight = Integer.MAX_VALUE;
+		this.adjacentNodes = new HashSet<AttachedTreeNode<T>>();
 		this.attached = attached;
+
+		reset();
 	}
 
-	public List<TreeNode> getAdjacentNodes() {
+	public Set<AttachedTreeNode<T>> getAdjacentNodes() {
 		return this.adjacentNodes;
 	}
 
@@ -28,7 +29,7 @@ public class AttachedTreeNode<T> implements TreeNode {
 		return this.attached;
 	}
 
-	public TreeNode getParent() {
+	public AttachedTreeNode<T> getParent() {
 		return this.parent;
 	}
 
@@ -36,7 +37,7 @@ public class AttachedTreeNode<T> implements TreeNode {
 		return this.weight;
 	}
 
-	public void setParent(TreeNode parent) {
+	public void setParent(AttachedTreeNode<T> parent) {
 		this.parent = parent;
 	}
 
@@ -44,11 +45,11 @@ public class AttachedTreeNode<T> implements TreeNode {
 		this.weight = weight;
 	}
 
-	public void addAjacentNode(TreeNode treeNode) {
+	public void addAjacentNode(AttachedTreeNode<T> treeNode) {
 		this.adjacentNodes.add(treeNode);
 	}
 
-	public int compareTo(TreeNode o) {
+	public int compareTo(AttachedTreeNode<T> o) {
 		return Integer.valueOf(this.weight).compareTo(o.getWeight());
 	}
 
@@ -57,8 +58,22 @@ public class AttachedTreeNode<T> implements TreeNode {
 	}
 
 	public void detach() {
-		for (TreeNode adjNode : getAdjacentNodes()) {
+		for (AttachedTreeNode<T> adjNode : getAdjacentNodes()) {
 			adjNode.getAdjacentNodes().remove(this);
 		}
+	}
+
+	public void reset() {
+		this.weight = Integer.MAX_VALUE;
+		setParent(null);
+	}
+
+	public List<AttachedTreeNode<T>> removeAllIncomingConnections() {
+		List<AttachedTreeNode<T>> oldAdjNodes = new ArrayList<AttachedTreeNode<T>>(
+				adjacentNodes);
+		for (AttachedTreeNode<T> adjNode : adjacentNodes) {
+			adjNode.getAdjacentNodes().remove(this);
+		}
+		return oldAdjNodes;
 	}
 }
