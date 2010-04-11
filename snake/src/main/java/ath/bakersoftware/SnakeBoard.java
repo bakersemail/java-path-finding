@@ -22,9 +22,9 @@ import com.bakersoftware.game.common.ai.ShortestPathCalculator;
 public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		PartDrawProvider {
 
-	private static final int BOARD_WIDTH = 50;
-	private static final int BOARD_HEIGHT = 50;
-	private static final int STARTING_FOOD = 20;
+	private static final int BOARD_WIDTH = 80;
+	private static final int BOARD_HEIGHT = 80;
+	private static final int STARTING_FOOD = 15;
 
 	private final int width;
 	private final int height;
@@ -107,7 +107,10 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 			SnakePart tail = snake.getTail();
 			builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
 			
-			running = !hitSelf();
+			if (hitSelf()) {
+				resetJoins();
+				path = findClosestFoodPath(snake);
+			}
 		}
 	}
 
@@ -143,7 +146,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 			return true;
 		}
 		if (snake.getDirectionY() > 0 && snake.getPositionY() >= height - 1) {
-			return true;
+			return true; 
 		}
 		if (snake.getDirectionY() < 0 && snake.getPositionY() <= 0) {
 			return true;
