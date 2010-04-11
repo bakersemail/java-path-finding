@@ -104,4 +104,15 @@ public class SnakePart extends DrawablePart {
 	public Color getColour() {
 		return colour;
 	}
+	
+	private SnakePart follow(SnakePart current) {
+		if (current.nextPart == null) {
+			return current;
+		}
+		return follow(current.nextPart);
+	}
+
+	public SnakePart getTail() {
+		return follow(this);
+	}
 }

@@ -7,11 +7,9 @@ import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,32 +18,27 @@ import com.bakersoftware.game.common.ai.AttachedTreeNode;
 import com.bakersoftware.game.common.ai.PathBuilder;
 import com.bakersoftware.game.common.ai.ShortestPathCalculator;
 
+@SuppressWarnings("serial")
 public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		PartDrawProvider {
-	private static final long serialVersionUID = 1L;
 
-	private static final int BOARD_WIDTH = 30;
-	private static final int BOARD_HEIGHT = 30;
-	private static final int STARTING_FOOD = 10;
+	private static final int BOARD_WIDTH = 50;
+	private static final int BOARD_HEIGHT = 50;
+	private static final int STARTING_FOOD = 20;
 
 	private final int width;
 	private final int height;
 	private final List<FoodPart> food;
-	private final AtomicInteger foodEaten = new AtomicInteger();
 
 	private volatile boolean running;
 
 	private SnakePart snake;
-	private int level;
 
 	private int drawWidth;
 	private int drawHeight;
 
-	private List<AttachedTreeNode<Part>> joins;
 	private PathBuilder<Part> builder;
 	private Stack<AttachedTreeNode<Part>> path;
-
-	private final Map<Part, AttachedTreeNode<Part>> nodesToRejoin = new HashMap<Part, AttachedTreeNode<Part>>();
 
 	public SnakeBoard(int width, int height, Window parent) {
 		this.width = width;
@@ -72,118 +65,63 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 			part.draw(g);
 		}
 		snake.draw(g);
-		g.setColor(Color.WHITE);
-		g.drawString("Score: " + foodEaten, drawWidth - getPartDrawWidth() * 2,
-				10);
-		g.drawString("Level: " + level, drawWidth - getPartDrawHeight() * 2
-				- 50, 10);
-
-		drawJoints(g);
-	}
-
-	private void drawJoints(Graphics g) {
-		g.setColor(Color.WHITE);
-		for (AttachedTreeNode<Part> joint : builder.list()) {
-			Part jointAttached = joint.getAttached();
-
-			for (AttachedTreeNode<Part> joinedTo : joint.getAdjacentNodes()) {
-				Part joinedToAttached = joinedTo.getAttached();
-				g.drawLine(getPartDrawWidth() * jointAttached.getPositionX(),
-						getPartDrawHeight() * jointAttached.getPositionY(),
-						getPartDrawWidth() * joinedToAttached.getPositionX(),
-						getPartDrawHeight() * joinedToAttached.getPositionY());
-			}
-		}
 	}
 
 	public void run() {
 		while (running) {
 			repaint();
 			try {
-				int delay = 180 - 20 * level;
-				if (delay < 0) {
-					delay = 0;
-				}
-				Thread.sleep(delay + 20);
+				TimeUnit.MILLISECONDS.sleep(10);
 			} catch (InterruptedException e) {
-				running = false;
+				e.printStackTrace();
 			}
+			
 			animate();
 			repaint();
 		}
 	}
 
-	private synchronized void animate() {
-		if (hitWall(snake)) {
-			running = false;
-		}
-		if (path == null || path.isEmpty()) {
-			path = findClosestFoodPath(snake);
-		}
-
-		snake.move();
-		if (path != null && !path.isEmpty()) {
-			AttachedTreeNode<Part> next = path.pop();
-			Part point = next.getAttached();
-			snake.setDirectionX(point.getPositionX() - snake.getPositionX());
-			snake.setDirectionY(point.getPositionY() - snake.getPositionY());
-		}
-
-		Map<Part, AttachedTreeNode<Part>> toAddBack = removeTouched();
-		if (toAddBack != null) {
-			recycleNowUntouched(toAddBack);
-		}
-	}
-
-	private void recycleNowUntouched(Map<Part, AttachedTreeNode<Part>> toAddBack) {
-		for (Part part : toAddBack.keySet()) {
-			AttachedTreeNode<Part> node = toAddBack.get(part);
-			System.out.println("adding path back from " + part + " to "
-					+ node.getAttached());
-			builder.withBiDirectionalVertex(part, node.getAttached());
-		}
-
-		joins = builder.list();
-	}
-
-	private Map<Part, AttachedTreeNode<Part>> removeTouched() {
-		Map<Part, AttachedTreeNode<Part>> toAddBack = new HashMap<Part, AttachedTreeNode<Part>>();
-		AttachedTreeNode<Part> removedNode = builder
-				.findNodeWithAttached(snake);
-		if (removedNode == null) {
-			return toAddBack;
-		}
-		removedNode.removeAllIncomingConnections();
-		nodesToRejoin.put(snake, removedNode);
-
-		SnakePart snakePart = snake;
-		for (Part part : nodesToRejoin.keySet()) {
-			AttachedTreeNode<Part> node = nodesToRejoin.get(part);
-			Part attached = node.getAttached();
-			boolean addBack = true;
-			while (snakePart != null) {
-				if (isSamePosition(snakePart, attached)) {
-					addBack = false;
-				} else {
-					break;
-				}
-				snakePart = snakePart.getNextPart();
+	private void animate() {
+		synchronized (builder) {
+			if (hitWall(snake)) {
+				running = false;
 			}
-
-			if (addBack) {
-				toAddBack.put(part, node);
+			if (path == null || path.isEmpty()) {
+				path = findClosestFoodPath(snake);
 			}
+	
+			snake.move();
+			if (path != null && !path.isEmpty()) {
+				AttachedTreeNode<Part> next = path.pop();
+				Part point = next.getAttached();
+				snake.setDirectionX(point.getPositionX() - snake.getPositionX());
+				snake.setDirectionY(point.getPositionY() - snake.getPositionY());
+			}
+		
+			AttachedTreeNode<Part> snakePart = builder.findNodeWithAttached(snake);
+			if (snakePart == null) {
+				return;
+			}
+			snakePart.removeAllIncomingConnections();
+			SnakePart tail = snake.getTail();
+			builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
+			
+			running = !hitSelf();
 		}
-		return toAddBack;
 	}
 
-	private boolean isSamePosition(SnakePart snakePart, Part attached) {
-		return attached.getPositionX() == snakePart.getPositionX()
-				&& attached.getPositionY() == snakePart.getPositionY();
+	private boolean hitSelf() {
+		SnakePart part = snake.getNextPart();
+		while (part != null) {
+			if (snake.equals(part)) {
+				return true;
+			}
+			part = part.getNextPart();
+		}
+		return false;
 	}
 
-	private Stack<AttachedTreeNode<Part>> getShorestPath(
-			List<Stack<AttachedTreeNode<Part>>> paths) {
+	private Stack<AttachedTreeNode<Part>> getShorestPath(List<Stack<AttachedTreeNode<Part>>> paths) {
 		int shorestDistance = Integer.MAX_VALUE;
 		Stack<AttachedTreeNode<Part>> shorestPath = null;
 
@@ -194,17 +132,6 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 			}
 		}
 		return shorestPath;
-	}
-
-	private boolean hitSelf(SnakePart snake) {
-		SnakePart aPart = snake.getNextPart();
-		while (aPart != null) {
-			if (isSamePosition(aPart, snake)) {
-				return true;
-			}
-			aPart = aPart.getNextPart();
-		}
-		return false;
 	}
 
 	private boolean hitWall(SnakePart snake) {
@@ -227,8 +154,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		final JFrame frame = new JFrame("Snake");
 		frame.setPreferredSize(new Dimension(600, 600));
 		frame.setBackground(Color.WHITE);
-		final SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT,
-				frame);
+		final SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT, frame);
 		for (int i = 0; i < STARTING_FOOD; i++) {
 			snakeBoard.addRandomFood();
 		}
@@ -260,7 +186,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		snakeBoard.setRunning(true);
 		while (!snakeBoard.running) {
 			try {
-				Thread.yield();
+				TimeUnit.SECONDS.sleep(3);
 			} catch (Exception e) {
 			}
 		}
@@ -280,16 +206,15 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		builder = new PathBuilder<Part>(new PartLocationComparator());
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height - 1; j++) {
-				builder.withBiDirectionalVertex(board[i][j], board[i][j + 1]);
+				builder.addBiDirectionalVertex(board[i][j], board[i][j + 1]);
 			}
 		}
 
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width - 1; i++) {
-				builder.withBiDirectionalVertex(board[i][j], board[i + 1][j]);
+				builder.addBiDirectionalVertex(board[i][j], board[i + 1][j]);
 			}
 		}
-		joins = builder.list();
 	}
 
 	protected void setDrawWidth(int drawWidth) {
@@ -309,14 +234,9 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		if (food != null) {
 			FoodPart eaten = null;
 			for (FoodPart part : food) {
-				if (part.getPositionX() == snake.getPositionX()
-						&& part.getPositionY() == snake.getPositionY()) {
+				if (part.equals(snake)) {
 					snake.grow();
 					eaten = part;
-					foodEaten.incrementAndGet();
-					if (foodEaten.get() % 5 == 0) {
-						level++;
-					}
 				}
 			}
 			if (eaten != null) {
@@ -335,16 +255,14 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 
 		List<Stack<AttachedTreeNode<Part>>> paths = new ArrayList<Stack<AttachedTreeNode<Part>>>();
 		for (FoodPart food : this.food) {
-			AttachedTreeNode<Part> foodNode = builder
-					.findNodeWithAttached(food);
-			paths.add(pathCalculator.calculatePath(headNode, foodNode, width
-					* height));
+			AttachedTreeNode<Part> foodNode = builder.findNodeWithAttached(food);
+			paths.add(pathCalculator.calculatePath(headNode, foodNode, width * height));
 		}
 		return getShorestPath(paths);
 	}
 
 	private void resetJoins() {
-		for (AttachedTreeNode<Part> node : joins) {
+		for (AttachedTreeNode<Part> node : builder.list()) {
 			node.reset();
 		}
 	}

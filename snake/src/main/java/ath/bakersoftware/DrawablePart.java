@@ -44,7 +44,7 @@ public abstract class DrawablePart extends Part {
 		return getPositionX() + ", " + getPositionY();
 	}
 
-	public boolean equals(DrawablePart part) {
+	public final boolean equals(DrawablePart part) {
 		return this.getPositionX() == part.getPositionX()
 				&& this.getPositionY() == part.getPositionY();
 	}
