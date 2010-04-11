@@ -1,19 +1,15 @@
 package com.bakersoftware.game.common.ai;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PathBuilder<T> {
 	private static final int MINIMUM_WEIGHT = 1;
 
-	private final List<AttachedTreeNode<T>> nodes;
+	private final Map<T, AttachedTreeNode<T>> nodes;
 
-	private final Comparator<T> comparator;
-
-	public PathBuilder(Comparator<T> comparator) {
-		this.comparator = comparator;
-		this.nodes = new ArrayList<AttachedTreeNode<T>>();
+	public PathBuilder() {
+		this.nodes = new HashMap<T, AttachedTreeNode<T>>();
 	}
 
 	public PathBuilder<T> withVertex(T source, T destination) {
@@ -40,7 +36,7 @@ public class PathBuilder<T> {
 		return this;
 	}
 
-	public List<AttachedTreeNode<T>> list() {
+	public Map<T, AttachedTreeNode<T>> list() {
 		return nodes;
 	}
 
@@ -53,18 +49,18 @@ public class PathBuilder<T> {
 	}
 
 	private AttachedTreeNode<T> addNodeWithAttached(T attached) {
-		AttachedTreeNode<T> node = new AttachedTreeNode<T>(attached, nodes
-				.size());
-		nodes.add(node);
+		AttachedTreeNode<T> node = new AttachedTreeNode<T>(attached, nodes.size());
+		nodes.put(attached, node);
 		return node;
 	}
 
 	public AttachedTreeNode<T> findNodeWithAttached(T attached) {
-		for (AttachedTreeNode<T> node : nodes) {
-			if (comparator.compare(node.getAttached(), attached) == 0) {
-				return node;
-			}
+		return nodes.get(attached);
+	}
+
+	public void resetNodes() {
+		for (AttachedTreeNode<T> node : nodes.values()) {
+			node.reset();
 		}
-		return null;
 	}
 }
