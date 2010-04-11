@@ -1,14 +1,12 @@
 package com.bakersoftware.game.common.ai;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 	private final int index;
-	private final Set<AttachedTreeNode<T>> adjacentNodes;
 	private final T attached;
+	private final Set<AttachedTreeNode<T>> adjacentNodes;
 
 	private AttachedTreeNode<T> parent;
 	private int weight;
@@ -68,12 +66,15 @@ public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 		setParent(null);
 	}
 
-	public List<AttachedTreeNode<T>> removeAllIncomingConnections() {
-		List<AttachedTreeNode<T>> oldAdjNodes = new ArrayList<AttachedTreeNode<T>>(
-				adjacentNodes);
+	public void removeAllIncomingConnections() {
 		for (AttachedTreeNode<T> adjNode : adjacentNodes) {
 			adjNode.getAdjacentNodes().remove(this);
 		}
-		return oldAdjNodes;
+	}
+	
+	public void restoreAllConnectionsToSelf() {
+		for (AttachedTreeNode<T> adjNode : adjacentNodes) {
+			adjNode.getAdjacentNodes().add(this);
+		}
 	}
 }

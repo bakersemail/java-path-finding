@@ -32,7 +32,7 @@ public class PathBuilder<T> {
 		return this;
 	}
 
-	public PathBuilder<T> withBiDirectionalVertex(T source, T destination) {
+	public PathBuilder<T> addBiDirectionalVertex(T source, T destination) {
 		AttachedTreeNode<T> node = getNewOrExistingNodeForAttached(source);
 		AttachedTreeNode<T> destinationNode = getNewOrExistingNodeForAttached(destination);
 		node.addAjacentNode(destinationNode);
