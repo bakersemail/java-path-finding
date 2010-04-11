@@ -50,7 +50,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(drawWidth, drawHeight));
-		this.builder = new PathBuilder<Part>(new PartLocationComparator());
+		this.builder = new PathBuilder<Part>();
 		initPaths();
 	}
 
@@ -262,9 +262,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 	}
 
 	private void resetJoins() {
-		for (AttachedTreeNode<Part> node : builder.list()) {
-			node.reset();
-		}
+		builder.resetNodes();
 	}
 
 	public void addRandomFood() {
