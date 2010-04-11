@@ -35,6 +35,10 @@ public class SnakeKeyHandler extends KeyAdapter {
 			snake.setDirectionX(0);
 			snake.setDirectionY(1);
 		}
+		
+		if (arg0.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			System.exit(0);
+		}
 		board.repaint();
 	}
 }

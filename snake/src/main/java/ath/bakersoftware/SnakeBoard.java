@@ -107,10 +107,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 			SnakePart tail = snake.getTail();
 			builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
 			
-			if (hitSelf()) {
-				resetJoins();
-				path = findClosestFoodPath(snake);
-			}
+			running = !hitSelf();
 		}
 	}
 
