@@ -29,6 +29,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 	private final int width;
 	private final int height;
 	private final List<FoodPart> food;
+	private final PathBuilder<Part> builder;
 
 	private volatile boolean running;
 
@@ -37,7 +38,6 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 	private int drawWidth;
 	private int drawHeight;
 
-	private PathBuilder<Part> builder;
 	private Stack<AttachedTreeNode<Part>> path;
 
 	public SnakeBoard(int width, int height, Window parent) {
@@ -50,6 +50,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(drawWidth, drawHeight));
+		this.builder = new PathBuilder<Part>(new PartLocationComparator());
 		initPaths();
 	}
 
@@ -202,8 +203,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 				board[i][j] = new Part(i, j);
 			}
 		}
-
-		builder = new PathBuilder<Part>(new PartLocationComparator());
+		
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height - 1; j++) {
 				builder.addBiDirectionalVertex(board[i][j], board[i][j + 1]);
