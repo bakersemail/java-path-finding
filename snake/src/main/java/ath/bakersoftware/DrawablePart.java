@@ -38,14 +38,4 @@ public abstract class DrawablePart extends Part {
 	protected void postDraw(Graphics g) {
 
 	}
-
-	@Override
-	public String toString() {
-		return getPositionX() + ", " + getPositionY();
-	}
-
-	public final boolean equals(DrawablePart part) {
-		return this.getPositionX() == part.getPositionX()
-				&& this.getPositionY() == part.getPositionY();
-	}
 }

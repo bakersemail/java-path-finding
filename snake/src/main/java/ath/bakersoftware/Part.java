@@ -25,13 +25,8 @@ public class Part {
 		this.positionY = positionY;
 	}
 
-	public boolean equals(Part other) {
+	public final boolean equals(Part other) {
 		return this.getPositionX() == other.getPositionX()
 				&& this.getPositionY() == other.getPositionY();
-	}
-
-	@Override
-	public String toString() {
-		return "(" + getPositionX() + ", " + getPositionY() + ")";
 	}
 }
