@@ -24,7 +24,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 
 	private static final int BOARD_WIDTH = 80;
 	private static final int BOARD_HEIGHT = 80;
-	private static final int STARTING_FOOD = 15;
+	private static final int STARTING_FOOD = 25;
 
 	private final int width;
 	private final int height;
@@ -105,7 +105,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		while (running) {
 			repaint();
 			try {
-				TimeUnit.MILLISECONDS.sleep(5);
+				TimeUnit.MILLISECONDS.sleep(30);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -137,17 +137,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 				snake.setDirectionY(point.getPositionY() - snake.getPositionY());
 			}
 			
-			if (hitSelf()) {
-				path = findClosestFoodPath(snake);
-				if (path != null && !path.isEmpty()) {
-					AttachedTreeNode<Part> next = path.pop();
-					Part point = next.getAttached();
-					snake.setDirectionX(point.getPositionX() - snake.getPositionX());
-					snake.setDirectionY(point.getPositionY() - snake.getPositionY());
-				}
-				snake.move();
-				running = !hitSelf();
-			}
+			running = !hitSelf();
 		}
 	}
 
