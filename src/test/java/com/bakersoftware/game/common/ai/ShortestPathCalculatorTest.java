@@ -33,7 +33,7 @@ public class ShortestPathCalculatorTest {
 		nodes.get(1).addAjacentNode(nodes.get(2));
 		nodes.get(2).addAjacentNode(destination);
 
-		// Some other long path which should be avoided
+		// other long path which should be avoided
 		nodes.get(1).addAjacentNode(nodes.get(3));
 		nodes.get(3).addAjacentNode(nodes.get(4));
 		nodes.get(4).addAjacentNode(nodes.get(5));
