@@ -25,7 +25,7 @@ public class PathBuilderTest {
 	}
 	
 	@Test
-	public void shouldBuildPath() {
+	public void shouldBuildPathWithAdjacentNodes() {
 		assertEquals(3, path.size());
 		assertEquals(NODE_1, path.get(NODE_1).getAttached());
 		assertEquals(NODE_2, path.get(NODE_2).getAttached());
@@ -43,6 +43,11 @@ public class PathBuilderTest {
 		assertFalse(containsAdjNode(path.get(NODE_3), NODE_1));
 		assertFalse(containsAdjNode(path.get(NODE_3), NODE_2));
 		assertFalse(containsAdjNode(path.get(NODE_3), NODE_3));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldThrowExceptionIfWeightInvalid() {
+		builder.withVertex(NODE_3, NODE_2, -1);
 	}
 	
 	@Test
