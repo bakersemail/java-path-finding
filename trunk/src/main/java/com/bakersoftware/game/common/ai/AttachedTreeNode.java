@@ -55,12 +55,6 @@ public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 		return this.index;
 	}
 
-	public void detach() {
-		for (AttachedTreeNode<T> adjNode : getAdjacentNodes()) {
-			adjNode.getAdjacentNodes().remove(this);
-		}
-	}
-
 	public void reset() {
 		this.weight = Integer.MAX_VALUE;
 		setParent(null);
