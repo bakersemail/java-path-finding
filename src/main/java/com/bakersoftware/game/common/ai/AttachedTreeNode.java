@@ -48,7 +48,7 @@ public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 	}
 
 	public int compareTo(AttachedTreeNode<T> o) {
-		return Integer.valueOf(this.weight).compareTo(o.getWeight());
+		return weight - o.getWeight();
 	}
 
 	public int getIndex() {
