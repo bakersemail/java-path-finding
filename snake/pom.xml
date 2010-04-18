@@ -22,17 +22,6 @@
 		</plugins>
 	</build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<configuration>
-					<targetJdk>1.5</targetJdk>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -44,6 +33,13 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.8.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>code.google.com.java-path-finding</groupId>
+			<artifactId>java-path-finding</artifactId>
+			<version>1</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

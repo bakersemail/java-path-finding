@@ -39,6 +39,7 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 	private int drawHeight;
 
 	private Stack<AttachedTreeNode<Part>> path;
+	private List<WallPart> walls;
 
 	public SnakeBoard(int width, int height, Window parent) {
 		this.width = width;
@@ -51,7 +52,35 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(drawWidth, drawHeight));
 		this.builder = new PathBuilder<Part>();
+		this.walls = new ArrayList<WallPart>();
 		initPaths();
+		addWalls();
+	}
+
+	private void addWalls() {
+		for (int x=0; x < width; x++) {
+			WallPart wall = new WallPart(x, 0, this);
+			walls.add(wall);
+			builder.findNodeWithAttached(wall).removeAllIncomingConnections();
+		}
+		
+		for (int x=0; x < width; x++) {
+			WallPart wall = new WallPart(x, height - 1, this);
+			walls.add(wall);
+			builder.findNodeWithAttached(wall).removeAllIncomingConnections();
+		}
+		
+		for (int y=0; y < height; y++) {
+			WallPart wall = new WallPart(0, y, this);
+			walls.add(wall);
+			builder.findNodeWithAttached(wall).removeAllIncomingConnections();
+		}
+		
+		for (int y=0; y < height; y++) {
+			WallPart wall = new WallPart(width - 1, y, this);
+			walls.add(wall);
+			builder.findNodeWithAttached(wall).removeAllIncomingConnections();
+		}
 	}
 
 	public void setRunning(boolean running) {
@@ -65,14 +94,18 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 		for (FoodPart part : food) {
 			part.draw(g);
 		}
+		
 		snake.draw(g);
+		for (WallPart part : walls) {
+			part.draw(g);
+		}
 	}
 
 	public void run() {
 		while (running) {
 			repaint();
 			try {
-				TimeUnit.MILLISECONDS.sleep(10);
+				TimeUnit.MILLISECONDS.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -92,22 +125,29 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 			}
 	
 			snake.move();
+			
+			AttachedTreeNode<Part> snakePart = builder.findNodeWithAttached(snake);
+			snakePart.removeAllIncomingConnections();
+			SnakePart tail = snake.getTail();
+			builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
 			if (path != null && !path.isEmpty()) {
 				AttachedTreeNode<Part> next = path.pop();
 				Part point = next.getAttached();
 				snake.setDirectionX(point.getPositionX() - snake.getPositionX());
 				snake.setDirectionY(point.getPositionY() - snake.getPositionY());
 			}
-		
-			AttachedTreeNode<Part> snakePart = builder.findNodeWithAttached(snake);
-			if (snakePart == null) {
-				return;
-			}
-			snakePart.removeAllIncomingConnections();
-			SnakePart tail = snake.getTail();
-			builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
 			
-			running = !hitSelf();
+			if (hitSelf()) {
+				path = findClosestFoodPath(snake);
+				if (path != null && !path.isEmpty()) {
+					AttachedTreeNode<Part> next = path.pop();
+					Part point = next.getAttached();
+					snake.setDirectionX(point.getPositionX() - snake.getPositionX());
+					snake.setDirectionY(point.getPositionY() - snake.getPositionY());
+				}
+				snake.move();
+				running = !hitSelf();
+			}
 		}
 	}
 
@@ -153,13 +193,14 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 
 	public static void main(String[] args) throws Exception {
 		final JFrame frame = new JFrame("Snake");
-		frame.setPreferredSize(new Dimension(600, 600));
+		frame.setPreferredSize(new Dimension(488, 514));
 		frame.setBackground(Color.WHITE);
 		final SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT, frame);
 		for (int i = 0; i < STARTING_FOOD; i++) {
 			snakeBoard.addRandomFood();
 		}
 
+		frame.setBackground(Color.WHITE);
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent arg0) {
@@ -266,18 +307,18 @@ public class SnakeBoard extends JPanel implements Runnable, SnakeEventHandler,
 	}
 
 	public void addRandomFood() {
-		int positionX = (int) (Math.random() * width);
-		int positionY = (int) (Math.random() * height);
+		int positionX = (int) (Math.random() * width - 1) + 1;
+		int positionY = (int) (Math.random() * height - 1) + 1;
 		food.add(new FoodPart(positionX, positionY, this));
 	}
 
 	@Override
 	public int getPartDrawWidth() {
-		return drawWidth / (width + 1);
+		return drawWidth / width;
 	}
 
 	@Override
 	public int getPartDrawHeight() {
-		return drawHeight / (height + 2);
+		return drawHeight / height;
 	}
 }
