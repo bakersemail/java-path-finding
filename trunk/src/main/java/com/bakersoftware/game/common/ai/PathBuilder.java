@@ -40,6 +40,16 @@ public class PathBuilder<T> {
 		return nodes;
 	}
 
+	public AttachedTreeNode<T> findNodeWithAttached(T attached) {
+		return nodes.get(attached);
+	}
+
+	public void resetNodes() {
+		for (AttachedTreeNode<T> node : nodes.values()) {
+			node.reset();
+		}
+	}
+	
 	private AttachedTreeNode<T> getNewOrExistingNodeForAttached(T attached) {
 		AttachedTreeNode<T> node = findNodeWithAttached(attached);
 		if (node == null) {
@@ -52,15 +62,5 @@ public class PathBuilder<T> {
 		AttachedTreeNode<T> node = new AttachedTreeNode<T>(attached, nodes.size());
 		nodes.put(attached, node);
 		return node;
-	}
-
-	public AttachedTreeNode<T> findNodeWithAttached(T attached) {
-		return nodes.get(attached);
-	}
-
-	public void resetNodes() {
-		for (AttachedTreeNode<T> node : nodes.values()) {
-			node.reset();
-		}
 	}
 }

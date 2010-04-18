@@ -2,7 +2,7 @@ package com.bakersoftware.game.common.ai;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.junit.Test;
@@ -10,8 +10,7 @@ import org.junit.Test;
 public class PathFindingIntegrationTest {
 	@Test
 	public void shouldReturnShortestPathFromBuilder() {
-		PathBuilder<String> builder = new PathBuilder<String>(
-				new EqualsComparator<String>());
+		PathBuilder<String> builder = new PathBuilder<String>();
 		ShortestPathCalculator<String> calculator = new ShortestPathCalculator<String>();
 
 		builder.withVertex("a", "b");
@@ -40,14 +39,12 @@ public class PathFindingIntegrationTest {
 
 		builder.withVertex("i", "h");
 
-		List<AttachedTreeNode<String>> nodes = builder.list();
+		Map<String, AttachedTreeNode<String>> nodes = builder.list();
 		assertEquals(9, nodes.size());
 
 		AttachedTreeNode<String> source = builder.findNodeWithAttached("a");
-		AttachedTreeNode<String> destination = builder
-				.findNodeWithAttached("i");
-		Stack<AttachedTreeNode<String>> path = calculator.calculatePath(source,
-				destination, 9);
+		AttachedTreeNode<String> destination = builder.findNodeWithAttached("i");
+		Stack<AttachedTreeNode<String>> path = calculator.calculatePath(source, destination, 9);
 		assertEquals(path.size(), 2);
 		assertEquals(path.pop().getAttached(), "d");
 		assertEquals(path.pop().getAttached(), "i");
