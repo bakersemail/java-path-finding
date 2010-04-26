@@ -5,33 +5,29 @@ import java.awt.Graphics;
 
 public class SnakePart extends DrawablePart {
 	private final Color colour;
-	private final SnakeEventHandler foodHandler;
-	private final PartDrawProvider partDrawProvider;
 
 	private SnakePart nextPart;
 	private int directionX;
 	private int directionY;
 
-	public SnakePart(SnakeEventHandler eventHandler, int positionX,
-			int positionY, Color colour, PartDrawProvider partDrawProvider) {
-		super(positionX, positionY, partDrawProvider);
-		this.foodHandler = eventHandler;
+	public SnakePart(int positionX, int positionY, Color colour) {
+		super(positionX, positionY);
 		this.colour = colour;
-		this.partDrawProvider = partDrawProvider;
 	}
 
 	public SnakePart getNextPart() {
 		return nextPart;
 	}
 
-	public void setNextPart(SnakePart nextPart) {
+	public SnakePart extend(SnakePart nextPart) {
 		this.nextPart = nextPart;
+		return this;
 	}
 
 	@Override
-	protected void postDraw(Graphics g) {
+	protected void postDraw(Graphics g, int drawWidth, int drawHeight) {
 		if (nextPart != null) {
-			nextPart.draw(g);
+			nextPart.draw(g, drawWidth, drawHeight);
 		}
 	}
 
@@ -44,10 +40,6 @@ public class SnakePart extends DrawablePart {
 
 		if (nextPart != null) {
 			move(positionX, positionY, directionX, directionY);
-		}
-
-		if (foodHandler != null) {
-			foodHandler.snakeMoved(this);
 		}
 	}
 
@@ -84,9 +76,8 @@ public class SnakePart extends DrawablePart {
 			int positionX = getPositionX() + directionX;
 			int positionY = getPositionY() + directionY;
 
-			SnakePart nextPart = new SnakePart(null, positionX, positionY,
-					colour, partDrawProvider);
-			setNextPart(nextPart);
+			SnakePart nextPart = new SnakePart(positionX, positionY, colour);
+			extend(nextPart);
 			nextPart.setDirectionX(directionX);
 			nextPart.setDirectionY(directionY);
 		}

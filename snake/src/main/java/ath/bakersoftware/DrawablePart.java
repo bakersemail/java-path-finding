@@ -6,36 +6,22 @@ import java.awt.Graphics2D;
 
 public abstract class DrawablePart extends Part {
 
-	private final PartDrawProvider partDrawProvider;
-
-	public DrawablePart(int positionX, int positionY,
-			PartDrawProvider partDrawProvider) {
+	public DrawablePart(int positionX, int positionY) {
 		super(positionX, positionY);
-		this.partDrawProvider = partDrawProvider;
 	}
 
-	public final void draw(Graphics g) {
-		preDraw(g);
-		drawPart(g);
-		postDraw(g);
-	}
-
-	private void drawPart(Graphics g) {
+	public void draw(Graphics g, int drawWidth, int drawHeight) {
 		Graphics2D graphics = (Graphics2D) g;
 		graphics.setColor(getColour());
-		int drawWidth = partDrawProvider.getPartDrawWidth();
-		int drawHeight = partDrawProvider.getPartDrawHeight();
 		graphics.fillRect(getPositionX() * drawWidth, getPositionY()
 				* drawHeight, drawWidth, drawHeight);
+		
+		postDraw(g, drawWidth, drawHeight);
 	}
 
-	public abstract Color getColour();
+	protected abstract Color getColour();
 
-	protected void preDraw(Graphics g) {
-
-	}
-
-	protected void postDraw(Graphics g) {
-
+	protected void postDraw(Graphics g, int drawWidth, int drawHeight) {
+		
 	}
 }
