@@ -1,4 +1,4 @@
-package com.bakersoftware.game.common.ai;
+package com.google.code.java_path_finding;
 
 import java.util.HashSet;
 import java.util.Set;

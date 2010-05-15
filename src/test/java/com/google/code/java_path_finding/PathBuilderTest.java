@@ -1,4 +1,4 @@
-package com.bakersoftware.game.common.ai;
+package com.google.code.java_path_finding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
