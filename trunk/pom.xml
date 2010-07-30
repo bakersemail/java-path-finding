@@ -25,7 +25,7 @@
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
-					<targetJdk>1.5</targetJdk>
+					<targetJdk>1.6</targetJdk>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -35,16 +35,16 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>4.8.1</version>
 			<type>jar</type>
-			<scope>compile</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.7</version>
+			<version>1.8.5</version>
 			<type>jar</type>
-			<scope>compile</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
