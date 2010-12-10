@@ -10,14 +10,13 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class Drawer extends JPanel {
 	private final SnakeBoard board;
-	private final SnakePart snake;
 	
+	private SnakePart snake;
 	private int partWidth;
 	private int partHeight;
 	
-	public Drawer(SnakeBoard board, Window parent, SnakePart snake) {
+	public Drawer(SnakeBoard board, Window parent) {
 		this.board = board;
-		this.snake = snake;
 		
 		setDrawWidth(parent.getWidth());
 		setDrawHeight(parent.getHeight());		
@@ -32,7 +31,7 @@ public class Drawer extends JPanel {
 		
 		for (DrawablePart part : board.getParts()) {
 			part.draw(g, partWidth, partHeight);
-		}	
+		}
 		snake.draw(g, partWidth, partHeight);
 	}
 
@@ -42,5 +41,9 @@ public class Drawer extends JPanel {
 
 	public void setDrawHeight(int drawHeight) {
 		this.partHeight = drawHeight / board.getHeight();
+	}
+
+	public void setSnake(SnakePart snake) {
+		this.snake = snake;
 	}
 }

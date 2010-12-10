@@ -1,6 +1,6 @@
 package ath.bakersoftware;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -68,13 +68,10 @@ public class Ai {
 		AttachedTreeNode<Part> headNode = builder.findNodeWithAttached(snake);
 		ShortestPathCalculator<Part> pathCalculator = new ShortestPathCalculator<Part>();
 
-		List<Stack<AttachedTreeNode<Part>>> paths = new ArrayList<Stack<AttachedTreeNode<Part>>>();
+		List<Stack<AttachedTreeNode<Part>>> paths = new LinkedList<Stack<AttachedTreeNode<Part>>>();
 		for (DrawablePart food : board.getFood()) {
-			AttachedTreeNode<Part> foodNode = builder
-					.findNodeWithAttached(food);
-			paths.add(pathCalculator.calculatePath(headNode, foodNode, board
-					.getWidth()
-					* board.getHeight()));
+			AttachedTreeNode<Part> foodNode = builder.findNodeWithAttached(food);
+			paths.add(pathCalculator.calculatePath(headNode, foodNode, board.getWidth()	* board.getHeight()));
 		}
 		return getShorestPath(paths);
 	}

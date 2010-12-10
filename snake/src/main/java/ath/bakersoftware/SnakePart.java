@@ -106,4 +106,10 @@ public class SnakePart extends DrawablePart {
 	public SnakePart getTail() {
 		return follow(this);
 	}
+
+	public static SnakePart newSnake() {
+		return new SnakePart(10, 10, Color.RED)
+			.extend(new SnakePart(11, 10, Color.YELLOW)
+			.extend(new SnakePart(12, 10, Color.YELLOW)));
+	}
 }

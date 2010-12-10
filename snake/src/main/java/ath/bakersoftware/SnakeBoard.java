@@ -1,33 +1,33 @@
 package ath.bakersoftware;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
 import javax.swing.JFrame;
 
 public class SnakeBoard {
 
+	private static final int STEP_WAIT = 30;
 	private static final int BOARD_WIDTH = 80;
 	private static final int BOARD_HEIGHT = 80;
 	private static final int STARTING_FOOD = 20;
 
 	private final int width;
 	private final int height;
-	private final List<DrawablePart> parts;
-	private final List<FoodPart> food;
-	private List<DrawablePart> walls;
+	private final Collection<DrawablePart> parts;
+	private final Collection<FoodPart> food;
+	private final Collection<DrawablePart> walls;
 
 	public SnakeBoard(int width, int height) {
 		this.width = width;
 		this.height = height;
 		
-		this.food = new ArrayList<FoodPart>(STARTING_FOOD);
-		this.parts = new ArrayList<DrawablePart>(STARTING_FOOD);
-		this.walls = new ArrayList<DrawablePart>();
+		this.food = new HashSet<FoodPart>(STARTING_FOOD);
+		this.parts = new HashSet<DrawablePart>(STARTING_FOOD);
+		this.walls = new HashSet<DrawablePart>();
 		addWalls();
 		for (int i = 0; i < STARTING_FOOD; i++) {
 			addRandomFood();
@@ -59,18 +59,16 @@ public class SnakeBoard {
 		frame.setSize(488, 514);
 		SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT);
 		
-		SnakePart snake = new SnakePart(10, 10, Color.RED)
-			.extend(new SnakePart(11, 10, Color.YELLOW)
-			.extend(new SnakePart(12, 10, Color.YELLOW)));
-
-		Drawer drawer = new Drawer(snakeBoard, frame, snake);
+		Drawer drawer = new Drawer(snakeBoard, frame);
 		prepareFrame(frame, drawer);
 
+		SnakePart snake = SnakePart.newSnake();
+		drawer.setSnake(snake);
+		
 		Ai ai = new Ai(snakeBoard, snake);
 		ai.step();
-		
 		Rules rules = new Rules(snake, BOARD_WIDTH, BOARD_HEIGHT);
-		Thread thread = new Thread(new Runner(drawer, rules, ai));
+		Thread thread = new Thread(new Runner(drawer, rules, ai, STEP_WAIT));
 		thread.start();
 		thread.join();
 	}
@@ -98,7 +96,7 @@ public class SnakeBoard {
 		parts.add(newFood);
 	}
 	
-	public List<DrawablePart> getParts() {
+	public Collection<DrawablePart> getParts() {
 		return parts;
 	}
 
@@ -110,11 +108,11 @@ public class SnakeBoard {
 		return height;
 	}
 	
-	public List<DrawablePart> getStaticParts() {
+	public Collection<DrawablePart> getStaticParts() {
 		return walls;
 	}
 
-	public List<FoodPart> getFood() {
+	public Collection<FoodPart> getFood() {
 		return food;
 	}
 
