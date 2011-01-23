@@ -1,9 +1,7 @@
 package com.bakersoftware.drawer
 
 import java.awt.image.BufferedImage
-
 import javax.imageio.ImageIO
-
 import com.bakersoftware.image.ImageTrimmer
 
 class MazeDrawerTest extends GroovyTestCase {
@@ -18,5 +16,7 @@ class MazeDrawerTest extends GroovyTestCase {
 		assert image != null
 		assert image.getWidth() == result.getWidth()
 		assert image.getHeight() == result.getHeight()
+		
+		ImageIO.write result, "GIF", new File("build/result.gif")
 	}
 }
