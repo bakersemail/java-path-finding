@@ -1,10 +1,7 @@
 package com.bakersoftware.solver
 
-import javax.imageio.ImageIO
 import com.google.code.java_path_finding.ShortestPathCalculator
 import javax.imageio.ImageIO
-
-import com.google.code.java_path_finding.ShortestPathCalculator
 
 class MazeBuilderTest {
 	void testBuildPathFromImage() {
