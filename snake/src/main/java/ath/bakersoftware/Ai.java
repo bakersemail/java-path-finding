@@ -12,10 +12,12 @@ public class Ai {
 	private final PathBuilder<Part> builder;
 	private final SnakeBoard board;
 	private final SnakePart snake;
+	private final EventHandler eventHandler;
 
 	private Stack<AttachedTreeNode<Part>> path;
 
-	public Ai(SnakeBoard board, SnakePart snake) {
+	public Ai(EventHandler eventHandler, SnakeBoard board, SnakePart snake) {
+		this.eventHandler = eventHandler;
 		this.board = board;
 		this.snake = snake;
 		this.builder = new PathBuilder<Part>();
@@ -63,6 +65,11 @@ public class Ai {
 			snake.setDirectionY(point.getPositionY() - snake.getPositionY());
 		}
 	}
+	
+	public void resetPath() {
+		resetJoins();
+		path = findClosestFoodPath(snake);
+	}
 
 	private Stack<AttachedTreeNode<Part>> findClosestFoodPath(SnakePart snake) {
 		AttachedTreeNode<Part> headNode = builder.findNodeWithAttached(snake);
@@ -89,11 +96,7 @@ public class Ai {
 			}
 		}
 		if (eaten != null) {
-			board.removeFood(eaten);
-			board.addRandomFood();
-
-			resetJoins();
-			path = findClosestFoodPath(snake);
+			eventHandler.ateFood(snake, eaten);
 		}
 	}
 

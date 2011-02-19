@@ -3,19 +3,17 @@ package ath.bakersoftware;
 public class Rules {
 	private final int width;
 	private final int height;
-	private final SnakePart snake;
 
-	public Rules(SnakePart snake, int width, int height) {
-		this.snake = snake;
+	public Rules(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}
 	
-	public boolean isGameOver() {
-		return isWallHit() || hitSelf();
+	public boolean isGameOver(SnakePart snake) {
+		return isWallHit(snake) || hitSelf(snake);
 	}
 	
-	private boolean isWallHit() {
+	private boolean isWallHit(SnakePart snake) {
 		if (snake.getDirectionX() > 0 && snake.getPositionX() >= width - 1) {
 			return true;
 		}
@@ -31,7 +29,7 @@ public class Rules {
 		return false;
 	}
 
-	private boolean hitSelf() {
+	private boolean hitSelf(SnakePart snake) {
 		SnakePart part = snake.getNextPart();
 		while (part != null) {
 			if (snake.equals(part)) {
