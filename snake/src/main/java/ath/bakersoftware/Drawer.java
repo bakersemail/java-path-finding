@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Window;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -11,7 +12,7 @@ import javax.swing.JPanel;
 public class Drawer extends JPanel {
 	private final SnakeBoard board;
 	
-	private SnakePart snake;
+	private List<SnakePart> snakes;
 	private int partWidth;
 	private int partHeight;
 	
@@ -26,13 +27,15 @@ public class Drawer extends JPanel {
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
+	public synchronized void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
 		for (DrawablePart part : board.getParts()) {
 			part.draw(g, partWidth, partHeight);
 		}
-		snake.draw(g, partWidth, partHeight);
+		for (SnakePart snake : snakes) {
+			snake.draw(g, partWidth, partHeight);
+		}
 	}
 
 	public void setDrawWidth(int drawWidth) {
@@ -43,7 +46,7 @@ public class Drawer extends JPanel {
 		this.partHeight = drawHeight / board.getHeight();
 	}
 
-	public void setSnake(SnakePart snake) {
-		this.snake = snake;
+	public void setSnakes(List<SnakePart> snakes) {
+		this.snakes = snakes;
 	}
 }

@@ -1,50 +1,39 @@
 package ath.bakersoftware;
 
-import java.util.concurrent.TimeUnit;
 
-public class Runner implements Runnable {
+public class Runner {
 
 	private final Rules rules;
 	private final Ai ai;
-	private final int stepWait;
 	private final SnakePart snake;
 	private final EventHandler eventHandler;
 	
 	private boolean running;
 
-	public Runner(EventHandler eventHandler, SnakePart snake, Rules rules, Ai ai, int stepWait) {
+	public Runner(EventHandler eventHandler, SnakePart snake, Rules rules, Ai ai) {
 		this.eventHandler = eventHandler;
 		this.snake = snake;
 		this.rules = rules;
 		this.ai = ai;
-		this.stepWait = stepWait;		
 	}
 	
-	@Override
-	public void run() {
+	public boolean runStep() {
 		running = true;
-		while (running) {
+		if (running) {
 			eventHandler.redraw();
-			if (stepWait > 0) {
-				delay();
-			}
-			
 			ai.step();
 			eventHandler.redraw();
 			
-			running = !rules.isGameOver(snake);
+			running = !rules.isGameOver(getSnake());
 		}
+		return running;
 	}
 	
 	public Ai getAi() {
 		return ai;
 	}
 
-	private void delay() {
-		try {
-			TimeUnit.MILLISECONDS.sleep(stepWait);
-		} catch (InterruptedException e) {
-			throw new IllegalStateException(e);
-		}
+	public SnakePart getSnake() {
+		return snake;
 	}
 }

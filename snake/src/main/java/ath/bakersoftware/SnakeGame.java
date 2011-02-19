@@ -22,7 +22,9 @@ public class SnakeGame {
 		prepareFrame(frame, drawer);
 
 		SnakeManager manager = new SnakeManager(snakeBoard, drawer, STEP_WAIT);
-		manager.addSnake().run();
+		
+		manager.addSnake(10, 10);
+		manager.run();
 	}
 
 	private static void prepareFrame(final JFrame frame, final Drawer drawer) {
