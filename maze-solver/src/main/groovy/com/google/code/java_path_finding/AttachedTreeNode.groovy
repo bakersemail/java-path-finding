@@ -1,15 +1,15 @@
 package com.google.code.java_path_finding
 
-class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
+class AttachedTreeNode implements Comparable<AttachedTreeNode> {
 	int index
-	T attached
-	Set<AttachedTreeNode<T>> adjacentNodes = [] as Set
+	def attached
+	Set<AttachedTreeNode> adjacentNodes = [] as Set
 
-	AttachedTreeNode<T> parent
+	AttachedTreeNode parent
 	int weight = Integer.MAX_VALUE
 
-	int compareTo(AttachedTreeNode<T> o) {
-		weight - o.getWeight()
+	int compareTo(AttachedTreeNode o) {
+		weight - o.weight
 	}
 
 	void reset() {
@@ -25,7 +25,7 @@ class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 	
 	void restoreAllConnectionsToSelf() {
 		adjacentNodes.each {
-			it.adjacentNodes.add this
+			it.adjacentNodes << this
 		}
 	}
 }

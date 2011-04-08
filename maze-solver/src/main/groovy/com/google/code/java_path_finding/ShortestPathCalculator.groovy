@@ -1,7 +1,7 @@
 package com.google.code.java_path_finding
 
-class ShortestPathCalculator<T> {
-	Stack<AttachedTreeNode<T>> calculatePath(AttachedTreeNode<T> source, AttachedTreeNode<T> destination, int numNodes) {
+class ShortestPathCalculator {
+	Stack<AttachedTreeNode> calculatePath(AttachedTreeNode source, AttachedTreeNode destination, int numNodes) {
 		def unsettled = [] as PriorityQueue
 		boolean[] settled = new boolean[numNodes]
 
@@ -9,7 +9,7 @@ class ShortestPathCalculator<T> {
 		unsettled << source
 
 		while (!unsettled.isEmpty()) {
-			AttachedTreeNode<T> head = unsettled.poll()
+			AttachedTreeNode head = unsettled.poll()
 			settled[head.getIndex()] = true
 			relaxNeighbors(head, unsettled, settled)
 		}
@@ -26,7 +26,7 @@ class ShortestPathCalculator<T> {
 		path
 	}
 
-	private def relaxNeighbors(AttachedTreeNode<T> node, def unsettled, boolean[] settled) {
+	private def relaxNeighbors(AttachedTreeNode node, def unsettled, boolean[] settled) {
 		node.adjacentNodes.each {
 			if (!settled[it.index] && it.weight > node.weight + 1) {
 				it.weight = node.weight + 1

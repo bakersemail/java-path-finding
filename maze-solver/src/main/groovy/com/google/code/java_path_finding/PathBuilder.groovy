@@ -1,25 +1,25 @@
 package com.google.code.java_path_finding
 
-class PathBuilder<T> {
+class PathBuilder {
 	static final int MINIMUM_WEIGHT = 1
 	
 	def nodes = [:]
 	
-	PathBuilder<T> addBiDirectionalVertex(T source, T destination) {
-		AttachedTreeNode<T> node = getNewOrExistingNodeForAttached(source)
-		AttachedTreeNode<T> destinationNode = getNewOrExistingNodeForAttached(destination)
+	PathBuilder addBiDirectionalVertex(def source, def destination) {
+		AttachedTreeNode node = getNewOrExistingNodeForAttached(source)
+		AttachedTreeNode destinationNode = getNewOrExistingNodeForAttached(destination)
 		node.adjacentNodes << destinationNode
 		destinationNode.adjacentNodes << node
 		this
 	}
 	
-	private def getNewOrExistingNodeForAttached(T attached) {
+	private def getNewOrExistingNodeForAttached(def attached) {
 		def node = nodes.get(attached)
 		node == null ? addNodeWithAttached(attached) : node 
 	}
 	
-	private def addNodeWithAttached(T attached) {
-		def node = new AttachedTreeNode<T>(attached: attached, index: nodes.size())
+	private def addNodeWithAttached(def attached) {
+		def node = new AttachedTreeNode(attached: attached, index: nodes.size())
 		nodes.put attached, node
 		node
 	}
