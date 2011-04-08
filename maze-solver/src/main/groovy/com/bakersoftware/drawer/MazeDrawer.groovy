@@ -13,8 +13,8 @@ class MazeDrawer {
 		MazeBuilder builder = new MazeBuilder()
 		builder.build image
 		
-		def entranceNode = builder.pathBuilder.findNodeWithAttached(builder.entrance)
-		def exitNode = builder.pathBuilder.findNodeWithAttached(builder.exit)
+		def entranceNode = builder.pathBuilder.nodes.get(builder.entrance)
+		def exitNode = builder.pathBuilder.nodes.get(builder.exit)
 		def path = new ShortestPathCalculator().calculatePath(entranceNode, exitNode, builder.gridWidth * builder.gridHeight)
 		def cellSize = new SizeDetector().findPointWidth(image)
 		

@@ -53,7 +53,7 @@ class MazeBuilder {
 		}
 		
 		sprites.findAll { it.wall }.each {
-			pathBuilder.findNodeWithAttached(it).removeAllIncomingConnections()
+			pathBuilder.nodes.get(it).removeAllIncomingConnections()
 		}
 	}
 	

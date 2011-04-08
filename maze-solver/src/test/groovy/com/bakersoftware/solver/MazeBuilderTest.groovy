@@ -20,7 +20,7 @@ class MazeBuilderTest {
 		assert exit.positionX == 132
 		assert exit.positionY == 131
 		
-		assert builder.pathBuilder.list().size() == NUM_NODES
+		assert builder.pathBuilder.nodes.size() == NUM_NODES
 		
 		def entranceNode = builder.pathBuilder.findNodeWithAttached(entrance)
 		assert entranceNode != null

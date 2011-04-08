@@ -17,6 +17,7 @@ class MazeDrawerTest extends GroovyTestCase {
 		assert image.getWidth() == result.getWidth()
 		assert image.getHeight() == result.getHeight()
 		
+		new File("build/result.gif").delete()
 		ImageIO.write result, "GIF", new File("build/result.gif")
 	}
 }
