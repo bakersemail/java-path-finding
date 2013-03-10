@@ -29,12 +29,12 @@ public class SnakeManager implements EventHandler {
 		Runner runner = new Runner(this, snake, rules, ai);
 		runners.add(runner);
 		snakes.add(snake);
+		drawer.setSnakes(snakes);
 		return runner;
 	}
 
 	@Override
 	public void redraw() {
-		drawer.setSnakes(snakes);
 		drawer.repaint();
 	}
 

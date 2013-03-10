@@ -19,11 +19,11 @@ public class SnakeGame {
 		SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT, STARTING_FOOD);
 		
 		Drawer drawer = new Drawer(snakeBoard, frame);
-		prepareFrame(frame, drawer);
 
 		SnakeManager manager = new SnakeManager(snakeBoard, drawer, STEP_WAIT);
 		
 		manager.addSnake(10, 10);
+		prepareFrame(frame, drawer);
 		manager.run();
 	}
 

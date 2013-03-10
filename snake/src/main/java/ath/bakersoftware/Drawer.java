@@ -27,7 +27,7 @@ public class Drawer extends JPanel {
 	}
 
 	@Override
-	public synchronized void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
 		for (DrawablePart part : board.getParts()) {

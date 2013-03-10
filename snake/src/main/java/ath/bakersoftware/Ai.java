@@ -55,6 +55,9 @@ public class Ai {
 		checkFood();
 
 		AttachedTreeNode<Part> snakePart = builder.findNodeWithAttached(snake);
+		if (snakePart == null) {
+			return;
+		}
 		snakePart.removeAllIncomingConnections();
 		SnakePart tail = snake.getTail();
 		builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();

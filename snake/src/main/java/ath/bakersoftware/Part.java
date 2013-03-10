@@ -27,7 +27,10 @@ public class Part {
 
 	@Override
 	public int hashCode() {
-		return positionX + positionY;
+		int hash = 23;
+		hash = hash * 31 + Integer.valueOf(positionX).hashCode();
+		hash = hash * 31 + Integer.valueOf(positionY).hashCode();
+		return hash;
 	}
 
 	public final boolean equals(Object o) {
