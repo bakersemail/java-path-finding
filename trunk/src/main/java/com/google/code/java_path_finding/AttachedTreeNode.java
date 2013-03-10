@@ -1,7 +1,8 @@
 package com.google.code.java_path_finding;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 	private final int index;
@@ -13,7 +14,7 @@ public class AttachedTreeNode<T> implements Comparable<AttachedTreeNode<T>> {
 
 	public AttachedTreeNode(T attached, int index) {
 		this.index = index;
-		this.adjacentNodes = new HashSet<AttachedTreeNode<T>>();
+		this.adjacentNodes = Collections.newSetFromMap(new WeakHashMap<AttachedTreeNode<T>, Boolean>());
 		this.attached = attached;
 
 		reset();
