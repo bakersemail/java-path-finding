@@ -59,13 +59,18 @@ public class SnakeManager implements EventHandler {
                 }
             }
 
+            if (runners.isEmpty()) {
+                System.out.println("All the snakes are dead");
+                snakes.clear();
+                addSnake(board.getWidth() / 2, board.getHeight() / 2);
+            }
+
             try {
                 TimeUnit.MILLISECONDS.sleep(start + stepWait - System.currentTimeMillis());
             } catch (InterruptedException e) {
                 throw new IllegalStateException(e);
             }
         }
-        System.out.println("All the snakes are dead");
 	}
 
 }

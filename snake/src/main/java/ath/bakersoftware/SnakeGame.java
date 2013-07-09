@@ -7,8 +7,8 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 
 public class SnakeGame {
-	private static final int STARTING_FOOD = 20;
-	private static final int STEP_WAIT = 30;
+	private static final int NUM_FOOD = 80;
+	private static final int STEP_WAIT = 5;
 	private static final int BOARD_WIDTH = 80;
 	private static final int BOARD_HEIGHT = 80;
 	
@@ -16,13 +16,13 @@ public class SnakeGame {
 		final JFrame frame = new JFrame("Snake");
 		frame.setPreferredSize(new Dimension(488, 514));
 		frame.setSize(488, 514);
-		SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT, STARTING_FOOD);
+		SnakeBoard snakeBoard = new SnakeBoard(BOARD_WIDTH, BOARD_HEIGHT, NUM_FOOD);
 		
 		Drawer drawer = new Drawer(snakeBoard, frame);
 
 		SnakeManager manager = new SnakeManager(snakeBoard, drawer, STEP_WAIT);
 		
-		manager.addSnake(10, 10);
+		manager.addSnake(BOARD_WIDTH / 2, BOARD_HEIGHT / 2);
 		prepareFrame(frame, drawer);
 		manager.run();
 	}
