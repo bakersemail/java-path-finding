@@ -22,13 +22,7 @@ public class SnakeBoard {
         Set<DrawablePart> setUpParts = new HashSet<DrawablePart>();
         setUpParts.addAll(this.walls);
         setUpParts.addAll(asList(this.food));
-
-        this.parts = new DrawablePart[setUpParts.size()];
-        int j = 0;
-        for (DrawablePart part : setUpParts) {
-            this.parts[j] = part;
-            j++;
-        }
+        this.parts = setUpParts.toArray(new DrawablePart[setUpParts.size()]);
 	}
 
 	private Set<DrawablePart> createWalls() {
