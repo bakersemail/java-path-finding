@@ -63,7 +63,11 @@ public class Ai {
 
 		snakePart.removeAllIncomingConnections();
 		SnakePart tail = snake.getTail();
-		builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
+        AttachedTreeNode<Part> tailAttached = builder.findNodeWithAttached(tail);
+        if (tailAttached == null) {
+            return false;
+        }
+        tailAttached.restoreAllConnectionsToSelf();
 		if (path != null && !path.isEmpty()) {
 			AttachedTreeNode<Part> next = path.pop();
 			Part point = next.getAttached();
