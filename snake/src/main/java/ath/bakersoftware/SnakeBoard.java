@@ -1,31 +1,38 @@
 package ath.bakersoftware;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 public class SnakeBoard {
 
 	private final int width;
 	private final int height;
-	private final Collection<DrawablePart> parts;
-	private final Collection<FoodPart> food;
+	private final DrawablePart parts[];
+	private final FoodPart[] food;
 	private final Collection<DrawablePart> walls;
 
 	public SnakeBoard(int width, int height, int numFood) {
 		this.width = width;
 		this.height = height;
-		
-		this.food = new HashSet<FoodPart>(numFood);
-		this.parts = new HashSet<DrawablePart>(numFood);
-		this.walls = new HashSet<DrawablePart>();
-		addWalls();
-		for (int i = 0; i < numFood; i++) {
-			addRandomFood();
-		}
+
+        this.food = addFood(numFood);
+		this.walls = createWalls();
+
+        Set<DrawablePart> setUpParts = new HashSet<DrawablePart>();
+        setUpParts.addAll(this.walls);
+        setUpParts.addAll(asList(this.food));
+
+        this.parts = new DrawablePart[setUpParts.size()];
+        int j = 0;
+        for (DrawablePart part : setUpParts) {
+            this.parts[j] = part;
+            j++;
+        }
 	}
 
-	private void addWalls() {
+	private Set<DrawablePart> createWalls() {
+        Set<DrawablePart> walls = new HashSet<DrawablePart>();
 		for (int x=0; x < width; x++) {
 			walls.add(new WallPart(x, 0));
 		}
@@ -41,18 +48,25 @@ public class SnakeBoard {
 		for (int y=0; y < height; y++) {
 			walls.add(new WallPart(width - 1, y));
 		}
-		parts.addAll(walls);
+
+        return walls;
 	}
 
-	public void addRandomFood() {
-		int positionX = new Random().nextInt(width - 2) + 1;
-		int positionY = new Random().nextInt(height - 2) + 1;
-		FoodPart newFood = new FoodPart(positionX, positionY);
-		food.add(newFood);
-		parts.add(newFood);
+	private FoodPart[] addFood(int number) {
+        FoodPart[] food = new FoodPart[number];
+        for (int i = 0; i < number; i++) {
+            food[i] = createRandomFood();
+        }
+        return food;
 	}
-	
-	public Collection<DrawablePart> getParts() {
+
+    private FoodPart createRandomFood() {
+        int positionX = new Random().nextInt(width - 2) + 1;
+        int positionY = new Random().nextInt(height - 2) + 1;
+        return new FoodPart(positionX, positionY);
+    }
+
+    public DrawablePart[] getParts() {
 		return parts;
 	}
 
@@ -68,12 +82,13 @@ public class SnakeBoard {
 		return walls;
 	}
 
-	public Collection<FoodPart> getFood() {
+	public FoodPart[] getFood() {
 		return food;
 	}
 
-	public void removeFood(FoodPart eaten) {
-		parts.remove(eaten);
-		food.remove(eaten);
-	}
+    public void replaceFood(FoodPart eaten) {
+        FoodPart newFood = createRandomFood();
+        eaten.setPositionX(newFood.getPositionX());
+        eaten.setPositionY(newFood.getPositionY());
+    }
 }

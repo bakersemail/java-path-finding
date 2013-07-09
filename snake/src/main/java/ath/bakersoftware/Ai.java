@@ -9,7 +9,9 @@ import com.google.code.java_path_finding.PathBuilder;
 import com.google.code.java_path_finding.ShortestPathCalculator;
 
 public class Ai {
-	private final PathBuilder<Part> builder;
+    private static final Stack<AttachedTreeNode<Part>> NO_PATH = new Stack<AttachedTreeNode<Part>>();
+
+    private final PathBuilder<Part> builder;
 	private final SnakeBoard board;
 	private final SnakePart snake;
 	private final EventHandler eventHandler;
@@ -46,7 +48,7 @@ public class Ai {
 		}
 	}
 
-	public void step() {
+	public boolean step() {
 		if (path == null || path.isEmpty()) {
 			path = findClosestFoodPath(snake);
 		}
@@ -56,8 +58,9 @@ public class Ai {
 
 		AttachedTreeNode<Part> snakePart = builder.findNodeWithAttached(snake);
 		if (snakePart == null) {
-			return;
+            return false;
 		}
+
 		snakePart.removeAllIncomingConnections();
 		SnakePart tail = snake.getTail();
 		builder.findNodeWithAttached(tail).restoreAllConnectionsToSelf();
@@ -66,7 +69,10 @@ public class Ai {
 			Part point = next.getAttached();
 			snake.setDirectionX(point.getPositionX() - snake.getPositionX());
 			snake.setDirectionY(point.getPositionY() - snake.getPositionY());
+            return true;
 		}
+
+        return false;
 	}
 	
 	public void resetPath() {
@@ -81,9 +87,17 @@ public class Ai {
 		List<Stack<AttachedTreeNode<Part>>> paths = new LinkedList<Stack<AttachedTreeNode<Part>>>();
 		for (DrawablePart food : board.getFood()) {
 			AttachedTreeNode<Part> foodNode = builder.findNodeWithAttached(food);
-			paths.add(pathCalculator.calculatePath(headNode, foodNode, board.getWidth()	* board.getHeight()));
+            if (headNode == null || foodNode == null) {
+                return NO_PATH;
+            }
+
+            Stack<AttachedTreeNode<Part>> path = pathCalculator.calculatePath(headNode, foodNode, board.getWidth() * board.getHeight());
+            if (path == null) {
+                return NO_PATH;
+            }
+            paths.add(path);
 		}
-		return getShorestPath(paths);
+		return getShortestPath(paths);
 	}
 
 	private void resetJoins() {
@@ -103,18 +117,17 @@ public class Ai {
 		}
 	}
 
-	private Stack<AttachedTreeNode<Part>> getShorestPath(
-			List<Stack<AttachedTreeNode<Part>>> paths) {
-		int shorestDistance = Integer.MAX_VALUE;
-		Stack<AttachedTreeNode<Part>> shorestPath = null;
+	private Stack<AttachedTreeNode<Part>> getShortestPath(List<Stack<AttachedTreeNode<Part>>> paths) {
+		int shortestDistance = Integer.MAX_VALUE;
+		Stack<AttachedTreeNode<Part>> shortestPath = null;
 
 		for (Stack<AttachedTreeNode<Part>> path : paths) {
-			if (path.size() < shorestDistance && path.size() > 1) {
-				shorestPath = path;
-				shorestDistance = shorestPath.size();
+			if (path.size() < shortestDistance && path.size() > 1) {
+				shortestPath = path;
+				shortestDistance = shortestPath.size();
 			}
 		}
-		return shorestPath;
+		return shortestPath;
 	}
 
 	private void addStatics() {
