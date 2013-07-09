@@ -16,8 +16,8 @@ public class SnakeBoard {
 		this.width = width;
 		this.height = height;
 
+        this.walls = createWalls();
         this.food = addFood(numFood);
-		this.walls = createWalls();
 
         Set<DrawablePart> setUpParts = new HashSet<DrawablePart>();
         setUpParts.addAll(this.walls);
@@ -43,10 +43,23 @@ public class SnakeBoard {
 			walls.add(new WallPart(width - 1, y));
 		}
 
+        middleBlocks(walls);
         return walls;
 	}
 
-	private FoodPart[] addFood(int number) {
+    private void middleBlocks(Set<DrawablePart> walls) {
+        for (int m=0; m < 5; m++) {
+            for (int k=0; k < 5; k++) {
+                for (int i=5 + k * 10; i < 10 + k * 10; i++) {
+                    for (int j=5 + m * 10; j < 10 + m * 10; j++) {
+                        walls.add(new WallPart(i+13, j+13));
+                    }
+                }
+            }
+        }
+    }
+
+    private FoodPart[] addFood(int number) {
         FoodPart[] food = new FoodPart[number];
         for (int i = 0; i < number; i++) {
             food[i] = createRandomFood();
@@ -55,9 +68,14 @@ public class SnakeBoard {
 	}
 
     private FoodPart createRandomFood() {
-        int positionX = new Random().nextInt(width - 2) + 1;
-        int positionY = new Random().nextInt(height - 2) + 1;
-        return new FoodPart(positionX, positionY);
+        while (true) {
+            int positionX = new Random().nextInt(width - 2) + 1;
+            int positionY = new Random().nextInt(height - 2) + 1;
+            FoodPart foodPart = new FoodPart(positionX, positionY);
+            if (!this.walls.contains(foodPart)) {
+                return foodPart;
+            }
+        }
     }
 
     public DrawablePart[] getParts() {
