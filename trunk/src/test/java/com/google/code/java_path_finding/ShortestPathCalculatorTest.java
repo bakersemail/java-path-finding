@@ -41,7 +41,7 @@ public class ShortestPathCalculatorTest {
 		nodes.get(6).addAjacentNode(destination);
 
 		Stack<AttachedTreeNode<Integer>> path = calculator.calculatePath(
-				source, destination, 100);
+				source, destination, 100, Long.MAX_VALUE);
 
 		assertTrue(path.pop().equals(nodes.get(1)));
 		assertTrue(path.pop().equals(nodes.get(2)));
@@ -50,4 +50,23 @@ public class ShortestPathCalculatorTest {
 		assertNull(source.getParent());
 		assertTrue(path.size() == 0);
 	}
+
+    @Test
+    public void shouldFindShortestPathStoppingAtMaxLength() {
+        AttachedTreeNode<Integer> source = nodes.get(0);
+        AttachedTreeNode<Integer> destination = nodes.get(9);
+
+        source.addAjacentNode(nodes.get(1));
+        nodes.get(1).addAjacentNode(nodes.get(2));
+        nodes.get(2).addAjacentNode(destination);
+
+        // other long path which should be avoided
+        nodes.get(1).addAjacentNode(nodes.get(3));
+        nodes.get(3).addAjacentNode(nodes.get(4));
+        nodes.get(4).addAjacentNode(nodes.get(5));
+        nodes.get(5).addAjacentNode(nodes.get(6));
+        nodes.get(6).addAjacentNode(destination);
+
+        assertNull(calculator.calculatePath(source, destination, 100, 2));
+    }
 }

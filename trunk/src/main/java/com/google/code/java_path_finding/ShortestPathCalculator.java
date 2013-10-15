@@ -5,8 +5,8 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class ShortestPathCalculator<T> {
-	public Stack<AttachedTreeNode<T>> calculatePath(AttachedTreeNode<T> source, 
-			AttachedTreeNode<T> destination, int numNodes) {
+    public Stack<AttachedTreeNode<T>> calculatePath(AttachedTreeNode<T> source,
+			AttachedTreeNode<T> destination, int numNodes, long maxPathLength) {
 		Queue<AttachedTreeNode<T>> unsettled = new PriorityQueue<AttachedTreeNode<T>>();
 		boolean[] settled = new boolean[numNodes];
 
@@ -24,6 +24,11 @@ public class ShortestPathCalculator<T> {
 			path.push(destination);
 			AttachedTreeNode<T> reverse = destination.getParent();
 			while (reverse != source && reverse != null) {
+                if (path.size() >= maxPathLength) {
+                    //No path within length
+                    return null;
+                }
+
 				path.push(reverse);
 				reverse = reverse.getParent();
 			}
