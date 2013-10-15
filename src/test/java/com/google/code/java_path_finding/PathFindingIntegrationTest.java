@@ -44,7 +44,7 @@ public class PathFindingIntegrationTest {
 
 		AttachedTreeNode<String> source = builder.findNodeWithAttached("a");
 		AttachedTreeNode<String> destination = builder.findNodeWithAttached("i");
-		Stack<AttachedTreeNode<String>> path = calculator.calculatePath(source, destination, 9);
+		Stack<AttachedTreeNode<String>> path = calculator.calculatePath(source, destination, 9, Long.MAX_VALUE);
 		assertEquals(path.size(), 2);
 		assertEquals(path.pop().getAttached(), "d");
 		assertEquals(path.pop().getAttached(), "i");
