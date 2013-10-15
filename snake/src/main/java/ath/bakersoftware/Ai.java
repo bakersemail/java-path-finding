@@ -109,15 +109,12 @@ public class Ai {
 	}
 
 	private void checkFood() {
-		FoodPart eaten = null;
 		for (FoodPart part : board.getFood()) {
 			if (part.equals(snake)) {
 				snake.grow();
-				eaten = part;
+                eventHandler.ateFood(part);
+                return;
 			}
-		}
-		if (eaten != null) {
-			eventHandler.ateFood(snake, eaten);
 		}
 	}
 

@@ -4,6 +4,6 @@ public interface EventHandler {
 
 	void redraw();
 
-	void ateFood(SnakePart snake, FoodPart eaten);
+	void ateFood(FoodPart eaten);
 
 }

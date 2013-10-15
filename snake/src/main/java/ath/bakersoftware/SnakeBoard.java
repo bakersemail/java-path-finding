@@ -2,26 +2,24 @@ package ath.bakersoftware;
 
 import java.util.*;
 
-import static java.util.Arrays.asList;
-
 public class SnakeBoard {
 
 	private final int width;
 	private final int height;
 	private final DrawablePart parts[];
-	private final FoodPart[] food;
-	private final Collection<DrawablePart> walls;
+	private final Set<FoodPart> food;
+	private final Set<DrawablePart> walls;
 
 	public SnakeBoard(int width, int height, int numFood) {
 		this.width = width;
 		this.height = height;
 
         this.walls = createWalls();
-        this.food = addFood(numFood);
+        this.food = setupFood(numFood);
 
         Set<DrawablePart> setUpParts = new HashSet<DrawablePart>();
         setUpParts.addAll(this.walls);
-        setUpParts.addAll(asList(this.food));
+        setUpParts.addAll(this.food);
         this.parts = setUpParts.toArray(new DrawablePart[setUpParts.size()]);
 	}
 
@@ -59,10 +57,10 @@ public class SnakeBoard {
         }
     }
 
-    private FoodPart[] addFood(int number) {
-        FoodPart[] food = new FoodPart[number];
+    private Set<FoodPart> setupFood(int number) {
+        Set<FoodPart> food = new HashSet<FoodPart>();
         for (int i = 0; i < number; i++) {
-            food[i] = createRandomFood();
+            food.add(createRandomFood());
         }
         return food;
 	}
@@ -90,15 +88,15 @@ public class SnakeBoard {
 		return height;
 	}
 	
-	public Collection<DrawablePart> getStaticParts() {
+	public Set<DrawablePart> getStaticParts() {
 		return walls;
 	}
 
-	public FoodPart[] getFood() {
+	public Set<FoodPart> getFood() {
 		return food;
 	}
 
-    public void replaceFood(FoodPart eaten) {
+    public void moveFood(FoodPart eaten) {
         FoodPart newFood = createRandomFood();
         eaten.setPositionX(newFood.getPositionX());
         eaten.setPositionY(newFood.getPositionY());

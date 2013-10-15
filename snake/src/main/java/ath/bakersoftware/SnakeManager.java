@@ -39,8 +39,8 @@ public class SnakeManager implements EventHandler {
 	}
 
 	@Override
-	public void ateFood(SnakePart snake, FoodPart eaten) {
-		board.replaceFood(eaten);
+	public void ateFood(FoodPart eaten) {
+		board.moveFood(eaten);
 		for (Runner runner : runners) {
 			runner.getAi().resetPath();
 		}
