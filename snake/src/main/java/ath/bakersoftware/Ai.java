@@ -95,12 +95,13 @@ public class Ai {
                 return NO_PATH;
             }
 
-            Stack<AttachedTreeNode<Part>> path = pathCalculator.calculatePath(headNode, foodNode, board.getWidth() * board.getHeight());
+            Stack<AttachedTreeNode<Part>> path = pathCalculator.calculatePath(headNode, foodNode,
+                    board.getWidth() * board.getHeight(), board.getWidth());
             if (path == null) {
-                return NO_PATH;
+                continue;
             }
             paths.add(path);
-		}
+        }
 		return getShortestPath(paths);
 	}
 
